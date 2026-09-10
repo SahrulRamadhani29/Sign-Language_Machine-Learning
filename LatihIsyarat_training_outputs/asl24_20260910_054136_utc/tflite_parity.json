@@ -1,0 +1,96 @@
+[
+  {
+    "variant": "float32",
+    "samples": 512,
+    "label_agreement": 1.0,
+    "maximum_absolute_score_difference": 1.3887882232666016e-05,
+    "mean_absolute_score_difference": 2.7262908375291772e-08,
+    "input_tensor": {
+      "name": "serving_default_image_0_255:0",
+      "shape": [
+        512,
+        28,
+        28,
+        1
+      ],
+      "shape_signature": [
+        -1,
+        28,
+        28,
+        1
+      ],
+      "dtype": "float32",
+      "quantization": [
+        0.0,
+        0
+      ],
+      "scales": [],
+      "zero_points": []
+    },
+    "output_tensor": {
+      "name": "StatefulPartitionedCall_1:0",
+      "shape": [
+        512,
+        24
+      ],
+      "shape_signature": [
+        -1,
+        24
+      ],
+      "dtype": "float32",
+      "quantization": [
+        0.0,
+        0
+      ],
+      "scales": [],
+      "zero_points": []
+    }
+  },
+  {
+    "variant": "float16_weights",
+    "samples": 512,
+    "label_agreement": 1.0,
+    "maximum_absolute_score_difference": 0.0024042129516601562,
+    "mean_absolute_score_difference": 6.4999730966519564e-06,
+    "input_tensor": {
+      "name": "serving_default_image_0_255:0",
+      "shape": [
+        512,
+        28,
+        28,
+        1
+      ],
+      "shape_signature": [
+        -1,
+        28,
+        28,
+        1
+      ],
+      "dtype": "float32",
+      "quantization": [
+        0.0,
+        0
+      ],
+      "scales": [],
+      "zero_points": []
+    },
+    "output_tensor": {
+      "name": "StatefulPartitionedCall_1:0",
+      "shape": [
+        512,
+        24
+      ],
+      "shape_signature": [
+        -1,
+        24
+      ],
+      "dtype": "float32",
+      "quantization": [
+        0.0,
+        0
+      ],
+      "scales": [],
+      "zero_points": []
+    }
+  }
+]

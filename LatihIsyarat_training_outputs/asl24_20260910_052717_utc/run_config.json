@@ -1,0 +1,36 @@
+{
+  "training": {
+    "seed": 42,
+    "validation_fraction": 0.2,
+    "batch_size": 64,
+    "max_epochs": 30,
+    "early_stopping_patience": 5,
+    "reduce_lr_patience": 2,
+    "reduce_lr_factor": 0.5,
+    "min_learning_rate": 1e-06,
+    "tflite_parity_samples": 512,
+    "export_float16": true
+  },
+  "experiments": [
+    {
+      "name": "baseline",
+      "learning_rate": 0.001,
+      "dropout": 0.3,
+      "use_mild_augmentation": false
+    },
+    {
+      "name": "mild_augmentation",
+      "learning_rate": 0.001,
+      "dropout": 0.3,
+      "use_mild_augmentation": true
+    },
+    {
+      "name": "mild_augmentation_dropout_040",
+      "learning_rate": 0.0005,
+      "dropout": 0.4,
+      "use_mild_augmentation": true
+    }
+  ],
+  "selection_metric": "minimum validation loss",
+  "test_used_for_selection": false
+}

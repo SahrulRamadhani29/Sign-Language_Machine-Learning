@@ -1,0 +1,13 @@
+{
+  "experiment": {
+    "name": "mild_augmentation_dropout_040",
+    "learning_rate": 0.0005,
+    "dropout": 0.4,
+    "use_mild_augmentation": true
+  },
+  "epochs_completed": 30,
+  "best_epoch": 28,
+  "best_val_loss": 0.1927797645330429,
+  "best_val_accuracy": 0.9278820157051086,
+  "checkpoint_path": "/content/drive/MyDrive/LatihIsyarat_training_outputs/asl24_20260910_052717_utc/experiments/mild_augmentation_dropout_040/best_model.keras"
+}

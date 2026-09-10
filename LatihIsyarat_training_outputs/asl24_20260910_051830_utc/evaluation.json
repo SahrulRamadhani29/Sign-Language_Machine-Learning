@@ -1,0 +1,173 @@
+{
+  "evaluated_at_utc": "2026-09-10T05:21:00+00:00",
+  "selection_rule": "Eksperimen dipilih dengan validation loss terendah; test bawaan baru dievaluasi setelah pemilihan.",
+  "test_samples": 7172,
+  "accuracy": 0.9595649749023982,
+  "macro_precision": 0.9588937049008543,
+  "macro_recall": 0.9611739045203546,
+  "macro_f1": 0.9586237844641156,
+  "classification_report": {
+    "A": {
+      "precision": 0.9403409090909091,
+      "recall": 1.0,
+      "f1-score": 0.9692532942898975,
+      "support": 331.0
+    },
+    "B": {
+      "precision": 0.9773242630385488,
+      "recall": 0.9976851851851852,
+      "f1-score": 0.9873997709049256,
+      "support": 432.0
+    },
+    "C": {
+      "precision": 0.9779179810725552,
+      "recall": 1.0,
+      "f1-score": 0.988835725677831,
+      "support": 310.0
+    },
+    "D": {
+      "precision": 1.0,
+      "recall": 0.9183673469387755,
+      "f1-score": 0.9574468085106383,
+      "support": 245.0
+    },
+    "E": {
+      "precision": 1.0,
+      "recall": 0.9939759036144579,
+      "f1-score": 0.9969788519637462,
+      "support": 498.0
+    },
+    "F": {
+      "precision": 0.9724409448818898,
+      "recall": 1.0,
+      "f1-score": 0.9860279441117764,
+      "support": 247.0
+    },
+    "G": {
+      "precision": 0.8915343915343915,
+      "recall": 0.9683908045977011,
+      "f1-score": 0.928374655647383,
+      "support": 348.0
+    },
+    "H": {
+      "precision": 0.9881235154394299,
+      "recall": 0.9541284403669725,
+      "f1-score": 0.970828471411902,
+      "support": 436.0
+    },
+    "I": {
+      "precision": 0.9050632911392406,
+      "recall": 0.9930555555555556,
+      "f1-score": 0.9470198675496688,
+      "support": 288.0
+    },
+    "K": {
+      "precision": 0.940251572327044,
+      "recall": 0.9033232628398792,
+      "f1-score": 0.9214175654853621,
+      "support": 331.0
+    },
+    "L": {
+      "precision": 0.9812206572769953,
+      "recall": 1.0,
+      "f1-score": 0.990521327014218,
+      "support": 209.0
+    },
+    "M": {
+      "precision": 0.9394812680115274,
+      "recall": 0.8274111675126904,
+      "f1-score": 0.8798920377867746,
+      "support": 394.0
+    },
+    "N": {
+      "precision": 0.9651162790697675,
+      "recall": 0.8556701030927835,
+      "f1-score": 0.907103825136612,
+      "support": 291.0
+    },
+    "O": {
+      "precision": 1.0,
+      "recall": 0.943089430894309,
+      "f1-score": 0.9707112970711297,
+      "support": 246.0
+    },
+    "P": {
+      "precision": 0.9971264367816092,
+      "recall": 1.0,
+      "f1-score": 0.9985611510791367,
+      "support": 347.0
+    },
+    "Q": {
+      "precision": 0.9879518072289156,
+      "recall": 1.0,
+      "f1-score": 0.9939393939393939,
+      "support": 164.0
+    },
+    "R": {
+      "precision": 0.8674698795180723,
+      "recall": 1.0,
+      "f1-score": 0.9290322580645162,
+      "support": 144.0
+    },
+    "S": {
+      "precision": 0.7987012987012987,
+      "recall": 1.0,
+      "f1-score": 0.8880866425992779,
+      "support": 246.0
+    },
+    "T": {
+      "precision": 0.9065040650406504,
+      "recall": 0.8991935483870968,
+      "f1-score": 0.902834008097166,
+      "support": 248.0
+    },
+    "U": {
+      "precision": 0.9919354838709677,
+      "recall": 0.924812030075188,
+      "f1-score": 0.9571984435797666,
+      "support": 266.0
+    },
+    "V": {
+      "precision": 1.0,
+      "recall": 0.9971098265895953,
+      "f1-score": 0.9985528219971056,
+      "support": 346.0
+    },
+    "W": {
+      "precision": 0.9951690821256038,
+      "recall": 1.0,
+      "f1-score": 0.9975786924939467,
+      "support": 206.0
+    },
+    "X": {
+      "precision": 0.9959677419354839,
+      "recall": 0.9250936329588015,
+      "f1-score": 0.9592233009708738,
+      "support": 267.0
+    },
+    "Y": {
+      "precision": 0.9938080495356038,
+      "recall": 0.9668674698795181,
+      "f1-score": 0.9801526717557252,
+      "support": 332.0
+    },
+    "accuracy": 0.9595649749023982,
+    "macro avg": {
+      "precision": 0.9588937049008543,
+      "recall": 0.9611739045203546,
+      "f1-score": 0.9586237844641156,
+      "support": 7172.0
+    },
+    "weighted avg": {
+      "precision": 0.9620475171348051,
+      "recall": 0.9595649749023982,
+      "f1-score": 0.9595483479973714,
+      "support": 7172.0
+    }
+  },
+  "limitations": [
+    "Metrik ini hanya berasal dari test bawaan Sign Language MNIST.",
+    "Metrik ini bukan bukti performa kamera HP atau kondisi tanpa tangan.",
+    "Dataset dapat memuat turunan augmentasi dari sumber yang terbatas."
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "created_at_utc": "2026-09-10T06:13:30+00:00",
+  "selection_rule": "Lowest validation loss; test metrics are reported, not used to select the deployable seed.",
+  "recommended_seed": 2026,
+  "recommended_model_path": "/content/drive/MyDrive/LatihIsyarat_training_outputs/asl24_20260910_054435_utc/model_float32.tflite",
+  "comparison": [
+    {
+      "seed": 42,
+      "experiment": "baseline",
+      "best_epoch": 29,
+      "validation_loss": 0.0007304503,
+      "validation_accuracy_pct": 100.0,
+      "test_accuracy_pct": 95.9564974902,
+      "macro_precision_pct": 95.8893704901,
+      "macro_recall_pct": 96.117390452,
+      "macro_f1_pct": 95.8623784464,
+      "tflite_label_agreement_pct": 100.0,
+      "tflite_max_abs_difference": 5.8413e-06,
+      "model_size_kib": 404.53125,
+      "model_path": "/content/drive/MyDrive/LatihIsyarat_training_outputs/asl24_20260910_052717_utc/model_float32.tflite"
+    },
+    {
+      "seed": 123,
+      "experiment": "baseline",
+      "best_epoch": 29,
+      "validation_loss": 0.0003252297,
+      "validation_accuracy_pct": 100.0,
+      "test_accuracy_pct": 95.510317903,
+      "macro_precision_pct": 94.9720697362,
+      "macro_recall_pct": 95.4903660737,
+      "macro_f1_pct": 95.0869368626,
+      "tflite_label_agreement_pct": 100.0,
+      "tflite_max_abs_difference": 1.38879e-05,
+      "model_size_kib": 404.53125,
+      "model_path": "/content/drive/MyDrive/LatihIsyarat_training_outputs/asl24_20260910_054136_utc/model_float32.tflite"
+    },
+    {
+      "seed": 2026,
+      "experiment": "baseline",
+      "best_epoch": 29,
+      "validation_loss": 9.05814e-05,
+      "validation_accuracy_pct": 100.0,
+      "test_accuracy_pct": 96.6954824317,
+      "macro_precision_pct": 96.26724819,
+      "macro_recall_pct": 97.0498889495,
+      "macro_f1_pct": 96.5374143099,
+      "tflite_label_agreement_pct": 100.0,
+      "tflite_max_abs_difference": 7.3314e-06,
+      "model_size_kib": 404.53125,
+      "model_path": "/content/drive/MyDrive/LatihIsyarat_training_outputs/asl24_20260910_054435_utc/model_float32.tflite"
+    }
+  ],
+  "statistics": [
+    {
+      "statistic": "mean",
+      "test_accuracy_pct": 96.054099275,
+      "macro_precision_pct": 95.7095628054,
+      "macro_recall_pct": 96.2192151584,
+      "macro_f1_pct": 95.828909873
+    },
+    {
+      "statistic": "std",
+      "test_accuracy_pct": 0.5985802547,
+      "macro_precision_pct": 0.6660479783,
+      "macro_recall_pct": 0.7847318671,
+      "macro_f1_pct": 0.7258176874
+    },
+    {
+      "statistic": "min",
+      "test_accuracy_pct": 95.510317903,
+      "macro_precision_pct": 94.9720697362,
+      "macro_recall_pct": 95.4903660737,
+      "macro_f1_pct": 95.0869368626
+    },
+    {
+      "statistic": "max",
+      "test_accuracy_pct": 96.6954824317,
+      "macro_precision_pct": 96.26724819,
+      "macro_recall_pct": 97.0498889495,
+      "macro_f1_pct": 96.5374143099
+    }
+  ],
+  "pairwise_prediction_agreement": [
+    {
+      "seed_a": 42,
+      "seed_b": 123,
+      "prediction_agreement_pct": 93.7116564417,
+      "both_correct_pct": 92.7356385945,
+      "both_wrong_pct": 1.2688232013
+    },
+    {
+      "seed_a": 42,
+      "seed_b": 2026,
+      "prediction_agreement_pct": 94.6876742889,
+      "both_correct_pct": 93.7255995538,
+      "both_wrong_pct": 1.0736196319
+    },
+    {
+      "seed_a": 123,
+      "seed_b": 2026,
+      "prediction_agreement_pct": 95.3430005577,
+      "both_correct_pct": 93.8510875627,
+      "both_wrong_pct": 1.6452872281
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "experiment": {
+    "name": "baseline",
+    "learning_rate": 0.001,
+    "dropout": 0.3,
+    "use_mild_augmentation": false
+  },
+  "epochs_completed": 30,
+  "best_epoch": 29,
+  "best_val_loss": 0.000730450265109539,
+  "best_val_accuracy": 1.0,
+  "checkpoint_path": "/content/drive/MyDrive/LatihIsyarat_training_outputs/asl24_20260910_051830_utc/experiments/baseline/best_model.keras"
+}
