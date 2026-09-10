@@ -23,6 +23,10 @@ from training_colab.training_pipeline import (
     select_best_experiment,
     stratified_train_validation_split,
 )
+from training_colab.experimental_high_accuracy import (
+    HighAccuracyCandidate,
+    select_high_accuracy_candidate,
+)
 
 
 class LabelContractTest(unittest.TestCase):
@@ -183,6 +187,41 @@ class MultiSeedComparisonTest(unittest.TestCase):
             self.assertEqual(len(result["pairwise"]), 1)
             self.assertTrue((output_dir / "multi_seed_summary.json").exists())
             self.assertTrue((output_dir / "multi_seed_comparison.png").exists())
+
+
+class HighAccuracyExperimentTest(unittest.TestCase):
+    def test_candidate_selection_uses_validation_loss(self) -> None:
+        candidate_a = HighAccuracyCandidate(
+            name="a",
+            filters=(32, 64, 128),
+            dense_units=256,
+            learning_rate=0.001,
+            block_dropouts=(0.0, 0.1, 0.2),
+            dense_dropout=0.2,
+        )
+        candidate_b = HighAccuracyCandidate(
+            name="b",
+            filters=(64, 128, 256),
+            dense_units=512,
+            learning_rate=0.0005,
+            block_dropouts=(0.0, 0.05, 0.1),
+            dense_dropout=0.15,
+        )
+        selected = select_high_accuracy_candidate(
+            [
+                {
+                    "candidate": {"name": candidate_a.name},
+                    "best_val_loss": 0.01,
+                    "best_val_accuracy": 1.0,
+                },
+                {
+                    "candidate": {"name": candidate_b.name},
+                    "best_val_loss": 0.005,
+                    "best_val_accuracy": 0.999,
+                },
+            ]
+        )
+        self.assertEqual(selected["candidate"]["name"], "b")
 
 
 if __name__ == "__main__":

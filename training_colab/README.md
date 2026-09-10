@@ -8,6 +8,8 @@ Flutter. Hasil yang nanti dibutuhkan Flutter adalah `model_float32.tflite`,
 
 [Bandingkan seed 42, 123, dan 2026](https://colab.research.google.com/github/SahrulRamadhani29/Sign-Language_Machine-Learning/blob/main/training_colab/LatihIsyarat_Compare_Seeds_Colab.ipynb)
 
+[Jalankan eksperimen CNN target 99,5%](https://colab.research.google.com/github/SahrulRamadhani29/Sign-Language_Machine-Learning/blob/main/training_colab/LatihIsyarat_Experimental_99_5_Colab.ipynb)
+
 ## Cara termudah
 
 1. Push repositori ini ke GitHub.
@@ -76,6 +78,27 @@ MyDrive/LatihIsyarat_training_outputs/comparison_seed_42_123_2026/
 Notebook menghasilkan tabel rata-rata dan standar deviasi, kesamaan prediksi
 antarmodel, metrik per huruf, grafik perbandingan, serta rekomendasi model yang
 dipilih berdasarkan validation loss.
+
+## Eksperimen target 99,5%
+
+`LatihIsyarat_Experimental_99_5_Colab.ipynb` menjalankan turnamen tiga CNN
+custom berkapasitas lebih tinggi. Model memakai dua convolution per blok,
+Batch Normalization, Spatial Dropout, dan Flatten agar informasi posisi tangan
+dipertahankan. Seluruh bobot tetap dilatih dari nol.
+
+Eksperimen memakai maksimal 80 epoch dengan early stopping. Ketiga kandidat
+dipilih hanya berdasarkan validation loss, lalu kandidat pemenang dievaluasi
+pada test set satu kali. Target 99,5% adalah sasaran dan tidak dijamin tercapai.
+
+Output disimpan terpisah agar model stabil seed 2026 tidak tertimpa:
+
+```text
+MyDrive/LatihIsyarat_experimental_outputs/high_accuracy_experiment_.../
+```
+
+Notebook akan mengukur jumlah parameter, ukuran `.keras`, ukuran TFLite
+float32/float16, parity, accuracy, macro-F1, dan perbandingan ukuran serta
+accuracy terhadap model stabil seed 2026.
 
 ## Folder hasil di Google Drive
 
