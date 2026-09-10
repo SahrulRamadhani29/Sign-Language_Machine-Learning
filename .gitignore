@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Training data and generated artifacts
+training_colab/data/
+training_colab/outputs/
+training_colab/**/*.keras
+training_colab/**/*.h5
+training_colab/**/*.tflite
+training_colab/**/*.zip
+training_colab/**/sign_mnist_*.csv
+
+# Secrets and local tooling
+kaggle.json
+.kaggle/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
