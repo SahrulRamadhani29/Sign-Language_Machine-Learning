@@ -276,7 +276,10 @@ def build_probability_ensemble(
     tf = base._require_tensorflow()
     if not checkpoint_paths:
         raise ValueError("Ensemble memerlukan minimal satu checkpoint.")
-    members = [tf.keras.models.load_model(path) for path in checkpoint_paths]
+    members = [
+        tf.keras.models.load_model(path, compile=False)
+        for path in checkpoint_paths
+    ]
     if len(members) == 1:
         return members[0]
 

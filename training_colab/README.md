@@ -12,6 +12,8 @@ Flutter. Hasil yang nanti dibutuhkan Flutter adalah `model_float32.tflite`,
 
 [Jalankan eksperimen besar <10 MiB, 5 approach x 3 seed](https://colab.research.google.com/github/SahrulRamadhani29/Sign-Language_Machine-Learning/blob/main/training_colab/LatihIsyarat_Experimental_Large_MultiSeed_Colab.ipynb)
 
+[Lanjutkan dengan ensemble 3-seed dan full-data fine-tune](https://colab.research.google.com/github/SahrulRamadhani29/Sign-Language_Machine-Learning/blob/main/training_colab/LatihIsyarat_ThreeSeed_FullData_Refit_Colab.ipynb)
+
 ## Cara termudah
 
 1. Push repositori ini ke GitHub.
@@ -131,6 +133,27 @@ MyDrive/LatihIsyarat_experimental_outputs/large_under_10mb_multiseed_v1/
 
 Untuk Flutter, cukup ambil `MODEL_PEMENANG_SIAP_DOWNLOAD.zip`. Model stabil dan
 folder eksperimen 2,25 MiB sebelumnya tidak diubah.
+
+## Ensemble tiga seed dan full-data fine-tune
+
+Setelah eksperimen besar selesai, jalankan
+`LatihIsyarat_ThreeSeed_FullData_Refit_Colab.ipynb`. Notebook ini memakai ulang
+tiga checkpoint `wide_3_5mb`; 15 training sebelumnya tidak diulang. Model
+pemenang dua seed saat ini dipertahankan sebagai baseline aman. Notebook lalu
+membuat ensemble seed 42, 123, dan 2026. Selanjutnya, masing-masing checkpoint
+di-fine-tune delapan epoch dengan learning rate kecil pada seluruh 27.455
+training rows dan digabung kembali.
+
+Kedua ensemble diekspor memakai bobot float16 agar tetap di bawah 10 MiB.
+Output utama tersedia sebagai:
+
+```text
+MyDrive/LatihIsyarat_experimental_outputs/wide_3seed_full_data_refit_v1/
+`-- MODEL_FINAL_SIAP_DOWNLOAD.zip
+```
+
+Perbandingan sebelum/sesudah fine-tune menggunakan official test set sehingga
+hasil ini harus disebut eksperimen, bukan benchmark final yang masih untouched.
 
 ## Folder hasil di Google Drive
 

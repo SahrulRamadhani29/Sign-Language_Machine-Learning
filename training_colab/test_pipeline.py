@@ -31,6 +31,9 @@ from training_colab.experimental_large_multiseed import (
     select_deployment_members,
     select_multi_seed_winner,
 )
+from training_colab.experimental_three_seed_refit import (
+    choose_experimental_stage,
+)
 
 
 class LabelContractTest(unittest.TestCase):
@@ -296,6 +299,44 @@ class LargeMultiSeedExperimentTest(unittest.TestCase):
             compile(
                 "\n".join(python_lines),
                 f"notebook_cell_{index}",
+                "exec",
+            )
+
+
+class ThreeSeedRefitExperimentTest(unittest.TestCase):
+    def test_stage_selection_prefers_test_accuracy_then_macro_f1(self) -> None:
+        selected = choose_experimental_stage(
+            [
+                {
+                    "stage": "before",
+                    "evaluation": {"accuracy": 0.990, "macro_f1": 0.995},
+                },
+                {
+                    "stage": "after",
+                    "evaluation": {"accuracy": 0.991, "macro_f1": 0.990},
+                },
+            ]
+        )
+        self.assertEqual(selected["stage"], "after")
+
+    def test_refit_notebook_code_cells_have_valid_python(self) -> None:
+        notebook_path = (
+            Path(__file__).parent
+            / "LatihIsyarat_ThreeSeed_FullData_Refit_Colab.ipynb"
+        )
+        notebook = json.loads(notebook_path.read_text(encoding="utf-8"))
+        for index, cell in enumerate(notebook["cells"]):
+            if cell["cell_type"] != "code":
+                continue
+            source = "".join(cell["source"])
+            python_lines = [
+                line
+                for line in source.splitlines()
+                if not line.lstrip().startswith(("%", "!"))
+            ]
+            compile(
+                "\n".join(python_lines),
+                f"refit_notebook_cell_{index}",
                 "exec",
             )
 
