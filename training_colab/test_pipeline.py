@@ -278,6 +278,27 @@ class LargeMultiSeedExperimentTest(unittest.TestCase):
         members = select_deployment_members(results, "large", 10.0)
         self.assertEqual(len(members), 1)
 
+    def test_generated_notebook_code_cells_have_valid_python(self) -> None:
+        notebook_path = (
+            Path(__file__).parent
+            / "LatihIsyarat_Experimental_Large_MultiSeed_Colab.ipynb"
+        )
+        notebook = json.loads(notebook_path.read_text(encoding="utf-8"))
+        for index, cell in enumerate(notebook["cells"]):
+            if cell["cell_type"] != "code":
+                continue
+            source = "".join(cell["source"])
+            python_lines = [
+                line
+                for line in source.splitlines()
+                if not line.lstrip().startswith(("%", "!"))
+            ]
+            compile(
+                "\n".join(python_lines),
+                f"notebook_cell_{index}",
+                "exec",
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
