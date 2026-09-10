@@ -10,6 +10,8 @@
 
 [Lanjutkan dengan ensemble 3-seed dan full-data fine-tune](https://colab.research.google.com/github/SahrulRamadhani29/Sign-Language_Machine-Learning/blob/main/training_colab/LatihIsyarat_ThreeSeed_FullData_Refit_Colab.ipynb)
 
+[Model juara final yang disiapkan untuk aplikasi PBL](MODEL_JUARA_FINAL_PBL/README.md)
+
 Repositori LatihIsyarat untuk melatih CNN pengenal 24 huruf statis alfabet
 American Sign Language (ASL). Huruf J dan Z tidak termasuk karena membutuhkan
 pengenalan gerakan.

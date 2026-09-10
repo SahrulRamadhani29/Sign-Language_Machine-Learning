@@ -1,0 +1,173 @@
+{
+  "evaluated_at_utc": "2026-09-10T14:09:54+00:00",
+  "selection_rule": "Diagnostic comparison between the existing two-seed ensemble, the three-seed ensemble, and the full-data fine-tuned ensemble.",
+  "test_samples": 7172,
+  "accuracy": 0.9930284439486894,
+  "macro_precision": 0.9934157867760499,
+  "macro_recall": 0.9935455660556523,
+  "macro_f1": 0.993325220663429,
+  "classification_report": {
+    "A": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 331.0
+    },
+    "B": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 432.0
+    },
+    "C": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 310.0
+    },
+    "D": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 245.0
+    },
+    "E": {
+      "precision": 0.9841897233201581,
+      "recall": 1.0,
+      "f1-score": 0.9920318725099602,
+      "support": 498.0
+    },
+    "F": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 247.0
+    },
+    "G": {
+      "precision": 0.9456521739130435,
+      "recall": 1.0,
+      "f1-score": 0.9720670391061452,
+      "support": 348.0
+    },
+    "H": {
+      "precision": 0.9952153110047847,
+      "recall": 0.9541284403669725,
+      "f1-score": 0.9742388758782201,
+      "support": 436.0
+    },
+    "I": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 288.0
+    },
+    "K": {
+      "precision": 1.0,
+      "recall": 0.9909365558912386,
+      "f1-score": 0.9954476479514416,
+      "support": 331.0
+    },
+    "L": {
+      "precision": 0.990521327014218,
+      "recall": 1.0,
+      "f1-score": 0.9952380952380953,
+      "support": 209.0
+    },
+    "M": {
+      "precision": 1.0,
+      "recall": 0.9847715736040609,
+      "f1-score": 0.9923273657289002,
+      "support": 394.0
+    },
+    "N": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 291.0
+    },
+    "O": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 246.0
+    },
+    "P": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 347.0
+    },
+    "Q": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 164.0
+    },
+    "R": {
+      "precision": 0.9795918367346939,
+      "recall": 1.0,
+      "f1-score": 0.9896907216494846,
+      "support": 144.0
+    },
+    "S": {
+      "precision": 1.0,
+      "recall": 0.991869918699187,
+      "f1-score": 0.9959183673469387,
+      "support": 246.0
+    },
+    "T": {
+      "precision": 1.0,
+      "recall": 0.9233870967741935,
+      "f1-score": 0.960167714884696,
+      "support": 248.0
+    },
+    "U": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 266.0
+    },
+    "V": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 346.0
+    },
+    "W": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 206.0
+    },
+    "X": {
+      "precision": 0.9468085106382979,
+      "recall": 1.0,
+      "f1-score": 0.9726775956284153,
+      "support": 267.0
+    },
+    "Y": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 332.0
+    },
+    "accuracy": 0.9930284439486894,
+    "macro avg": {
+      "precision": 0.9934157867760499,
+      "recall": 0.9935455660556523,
+      "f1-score": 0.993325220663429,
+      "support": 7172.0
+    },
+    "weighted avg": {
+      "precision": 0.9933080547280336,
+      "recall": 0.9930284439486894,
+      "f1-score": 0.9930134078478448,
+      "support": 7172.0
+    }
+  },
+  "limitations": [
+    "Metrik ini hanya berasal dari test bawaan Sign Language MNIST.",
+    "Metrik ini bukan bukti performa kamera HP atau kondisi tanpa tangan.",
+    "Dataset dapat memuat turunan augmentasi dari sumber yang terbatas."
+  ]
+}
