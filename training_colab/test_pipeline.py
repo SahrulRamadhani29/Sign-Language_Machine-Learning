@@ -27,6 +27,10 @@ from training_colab.experimental_high_accuracy import (
     HighAccuracyCandidate,
     select_high_accuracy_candidate,
 )
+from training_colab.experimental_large_multiseed import (
+    select_deployment_members,
+    select_multi_seed_winner,
+)
 
 
 class LabelContractTest(unittest.TestCase):
@@ -222,6 +226,57 @@ class HighAccuracyExperimentTest(unittest.TestCase):
             ]
         )
         self.assertEqual(selected["candidate"]["name"], "b")
+
+
+class LargeMultiSeedExperimentTest(unittest.TestCase):
+    @staticmethod
+    def _result(
+        candidate: str,
+        seed: int,
+        parameters: int,
+        val_loss: float,
+        val_accuracy: float,
+    ) -> dict:
+        return {
+            "candidate": {"name": candidate},
+            "seed": seed,
+            "parameter_count": parameters,
+            "best_epoch": 10,
+            "epochs_completed": 15,
+            "best_val_loss": val_loss,
+            "best_val_accuracy": val_accuracy,
+            "checkpoint_path": f"/{candidate}/seed_{seed}/best_model.keras",
+        }
+
+    def test_architecture_selection_uses_mean_validation_loss(self) -> None:
+        results = [
+            self._result("stable", 42, 500_000, 0.02, 0.99),
+            self._result("stable", 123, 500_000, 0.02, 0.99),
+            self._result("lucky_once", 42, 500_000, 0.001, 1.0),
+            self._result("lucky_once", 123, 500_000, 0.10, 0.98),
+        ]
+        selected, _, aggregate = select_multi_seed_winner(results)
+        self.assertEqual(selected["candidate"]["name"], "stable")
+        self.assertEqual(aggregate.iloc[0]["candidate"], "stable")
+
+    def test_ensemble_member_count_respects_size_limit(self) -> None:
+        parameters = 600_000  # Roughly 2.29 MiB per float32 member.
+        results = [
+            self._result("small", seed, parameters, 0.01 + index, 0.99)
+            for index, seed in enumerate((42, 123, 2026))
+        ]
+        members = select_deployment_members(results, "small", 10.0)
+        self.assertEqual(len(members), 3)
+        self.assertEqual(members[0]["seed"], 42)
+
+    def test_large_candidate_stays_single_model(self) -> None:
+        parameters = 2_340_952  # Roughly 8.93 MiB per float32 member.
+        results = [
+            self._result("large", seed, parameters, 0.01, 0.99)
+            for seed in (42, 123, 2026)
+        ]
+        members = select_deployment_members(results, "large", 10.0)
+        self.assertEqual(len(members), 1)
 
 
 if __name__ == "__main__":

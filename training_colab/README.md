@@ -10,6 +10,8 @@ Flutter. Hasil yang nanti dibutuhkan Flutter adalah `model_float32.tflite`,
 
 [Jalankan eksperimen CNN target 99,5%](https://colab.research.google.com/github/SahrulRamadhani29/Sign-Language_Machine-Learning/blob/main/training_colab/LatihIsyarat_Experimental_99_5_Colab.ipynb)
 
+[Jalankan eksperimen besar <10 MiB, 5 approach x 3 seed](https://colab.research.google.com/github/SahrulRamadhani29/Sign-Language_Machine-Learning/blob/main/training_colab/LatihIsyarat_Experimental_Large_MultiSeed_Colab.ipynb)
+
 ## Cara termudah
 
 1. Push repositori ini ke GitHub.
@@ -99,6 +101,36 @@ MyDrive/LatihIsyarat_experimental_outputs/high_accuracy_experiment_.../
 Notebook akan mengukur jumlah parameter, ukuran `.keras`, ukuran TFLite
 float32/float16, parity, accuracy, macro-F1, dan perbandingan ukuran serta
 accuracy terhadap model stabil seed 2026.
+
+## Eksperimen besar multi-seed di bawah 10 MiB
+
+`LatihIsyarat_Experimental_Large_MultiSeed_Colab.ipynb` menjalankan lima
+approach dengan seed 42, 123, dan 2026, sehingga totalnya 15 training. Ukuran
+kandidat tunggal diperkirakan 2,25-8,9 MiB. Kandidat kecil dapat digabungkan
+menjadi satu ensemble multi-seed selama hasil akhirnya tetap di bawah 10 MiB.
+
+Semua model memakai split validation tetap. Approach dipilih berdasarkan
+rata-rata validation loss antar-seed dan official test baru dievaluasi setelah
+pemilihan. Jika runtime Colab terputus, jalankan ulang notebook dengan
+`RUN_NAME` yang sama; checkpoint yang telah selesai otomatis dilewati.
+
+Seluruh hasil berada di satu folder Drive:
+
+```text
+MyDrive/LatihIsyarat_experimental_outputs/large_under_10mb_multiseed_v1/
+|-- MODEL_PEMENANG/
+|   |-- model_float32.tflite
+|   |-- model_float16.tflite
+|   |-- labels.json
+|   `-- model_metadata.json
+|-- training_runs/
+|-- PERBANDINGAN_UTAMA.csv
+|-- SEMUA_HASIL_TRAINING.csv
+`-- MODEL_PEMENANG_SIAP_DOWNLOAD.zip
+```
+
+Untuk Flutter, cukup ambil `MODEL_PEMENANG_SIAP_DOWNLOAD.zip`. Model stabil dan
+folder eksperimen 2,25 MiB sebelumnya tidak diubah.
 
 ## Folder hasil di Google Drive
 
