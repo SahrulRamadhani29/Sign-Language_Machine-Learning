@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -15,6 +16,7 @@ from training_colab.training_pipeline import (
     LABEL_TO_INDEX,
     ORIGINAL_LABELS,
     ExperimentConfig,
+    compare_seed_runs,
     load_sign_mnist_csv,
     remap_original_labels,
     resolve_dataset_paths,
@@ -107,6 +109,80 @@ class SelectionContractTest(unittest.TestCase):
         experiment = ExperimentConfig(name="baseline")
         self.assertFalse(experiment.use_mild_augmentation)
         self.assertEqual(experiment.dropout, 0.3)
+
+
+class MultiSeedComparisonTest(unittest.TestCase):
+    def _write_fake_run(
+        self,
+        root: Path,
+        seed: int,
+        validation_loss: float,
+        predicted: list[int],
+    ) -> Path:
+        run_dir = root / f"seed_{seed}"
+        run_dir.mkdir()
+        true_labels = [0, 1, 2, 3]
+        correct = np.asarray(predicted) == np.asarray(true_labels)
+        report = {
+            label: {
+                "precision": 1.0,
+                "recall": 1.0,
+                "f1-score": 1.0,
+                "support": 1,
+            }
+            for label in CLASS_NAMES
+        }
+        payloads = {
+            "run_config.json": {"training": {"seed": seed}},
+            "selected_experiment.json": {
+                "experiment": {"name": "baseline"},
+                "best_epoch": 10,
+                "best_val_loss": validation_loss,
+                "best_val_accuracy": 1.0,
+            },
+            "evaluation.json": {
+                "accuracy": float(correct.mean()),
+                "macro_precision": 0.9,
+                "macro_recall": 0.9,
+                "macro_f1": 0.9,
+                "classification_report": report,
+            },
+            "tflite_parity.json": [
+                {
+                    "variant": "float32",
+                    "label_agreement": 1.0,
+                    "maximum_absolute_score_difference": 1e-6,
+                }
+            ],
+        }
+        for filename, payload in payloads.items():
+            (run_dir / filename).write_text(
+                json.dumps(payload), encoding="utf-8"
+            )
+        pd.DataFrame(
+            {
+                "true_index": true_labels,
+                "predicted_index": predicted,
+                "correct": correct,
+            }
+        ).to_csv(run_dir / "test_predictions.csv", index=False)
+        (run_dir / "model_float32.tflite").write_bytes(b"fake-tflite")
+        return run_dir
+
+    def test_compare_seed_runs_selects_by_validation_loss(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_dir:
+            root = Path(temporary_dir)
+            run_42 = self._write_fake_run(root, 42, 0.2, [0, 1, 2, 0])
+            run_123 = self._write_fake_run(root, 123, 0.1, [0, 1, 0, 3])
+            output_dir = root / "comparison"
+            result = compare_seed_runs(
+                {42: run_42, 123: run_123},
+                output_dir=output_dir,
+            )
+            self.assertEqual(result["recommended_seed"], 123)
+            self.assertEqual(len(result["pairwise"]), 1)
+            self.assertTrue((output_dir / "multi_seed_summary.json").exists())
+            self.assertTrue((output_dir / "multi_seed_comparison.png").exists())
 
 
 if __name__ == "__main__":

@@ -10,6 +10,7 @@ import nbformat as nbf
 ROOT = Path(__file__).resolve().parent
 SOURCE_PATH = ROOT / "training_pipeline.py"
 NOTEBOOK_PATH = ROOT / "LatihIsyarat_Training_Colab.ipynb"
+COMPARE_NOTEBOOK_PATH = ROOT / "LatihIsyarat_Compare_Seeds_Colab.ipynb"
 
 
 def main() -> None:
@@ -172,6 +173,136 @@ kondisi tanpa tangan."""
     nbf.validate(notebook)
     nbf.write(notebook, NOTEBOOK_PATH)
     print(f"Notebook dibuat: {NOTEBOOK_PATH}")
+
+    compare_notebook = nbf.v4.new_notebook()
+    compare_notebook["metadata"] = {
+        "colab": {
+            "name": "LatihIsyarat_Compare_Seeds_Colab.ipynb",
+            "provenance": [],
+        },
+        "kernelspec": {
+            "display_name": "Python 3",
+            "language": "python",
+            "name": "python3",
+        },
+        "language_info": {"name": "python"},
+    }
+    compare_notebook["cells"] = [
+        nbf.v4.new_markdown_cell(
+            """# Perbandingan Model LatihIsyarat Multi-Seed
+
+Notebook ini hanya membaca hasil training seed 42, 123, dan 2026 dari Google
+Drive. Notebook **tidak melakukan training dan tidak mengunduh dataset**.
+
+Hasil yang dihitung: rata-rata, standar deviasi, rentang metrik, kesamaan
+prediksi antarmodel, metrik per huruf, ukuran model, dan rekomendasi model
+berdasarkan validation loss."""
+        ),
+        nbf.v4.new_markdown_cell("## 1. Pasang dependensi ringan"),
+        nbf.v4.new_code_cell(
+            "%pip install -q seaborn scikit-learn"
+        ),
+        nbf.v4.new_markdown_cell("## 2. Hubungkan Google Drive"),
+        nbf.v4.new_code_cell(
+            """from google.colab import drive
+
+drive.mount("/content/drive")"""
+        ),
+        nbf.v4.new_markdown_cell(
+            """## 3. Definisi fungsi perbandingan
+
+Sel ini berasal dari `training_pipeline.py` dan tidak perlu diedit."""
+        ),
+        nbf.v4.new_code_cell(source),
+        nbf.v4.new_markdown_cell(
+            """## 4. Folder hasil tiga seed
+
+Path berikut sudah diisi berdasarkan run yang telah selesai. Ubah hanya jika
+folder di Google Drive dipindahkan atau namanya berbeda."""
+        ),
+        nbf.v4.new_code_cell(
+            """from pathlib import Path
+
+SEED_RUNS = {
+    42: Path(
+        "/content/drive/MyDrive/LatihIsyarat_training_outputs/"
+        "asl24_20260910_052717_utc"
+    ),
+    123: Path(
+        "/content/drive/MyDrive/LatihIsyarat_training_outputs/"
+        "asl24_20260910_054136_utc"
+    ),
+    2026: Path(
+        "/content/drive/MyDrive/LatihIsyarat_training_outputs/"
+        "asl24_20260910_054435_utc"
+    ),
+}
+
+COMPARISON_OUTPUT_DIR = Path(
+    "/content/drive/MyDrive/LatihIsyarat_training_outputs/"
+    "comparison_seed_42_123_2026"
+)
+
+for seed, run_dir in SEED_RUNS.items():
+    print(f"Seed {seed}: {run_dir}")
+print("Output perbandingan:", COMPARISON_OUTPUT_DIR)"""
+        ),
+        nbf.v4.new_markdown_cell("## 5. Bandingkan ketiga model"),
+        nbf.v4.new_code_cell(
+            """MULTI_SEED_RESULT = compare_seed_runs(
+    SEED_RUNS,
+    output_dir=COMPARISON_OUTPUT_DIR,
+)
+
+print("Perbandingan selesai.")"""
+        ),
+        nbf.v4.new_markdown_cell("## 6. Tampilkan hasil"),
+        nbf.v4.new_code_cell(
+            """from IPython.display import display
+
+print("PERBANDINGAN UTAMA")
+display(MULTI_SEED_RESULT["comparison"].round(6))
+
+print("STATISTIK ANTAR-SEED")
+display(MULTI_SEED_RESULT["statistics"].round(6))
+
+print("KESEPAKATAN PREDIKSI ANTARMODEL")
+display(MULTI_SEED_RESULT["pairwise"].round(6))
+
+print("LIMA HURUF DENGAN F1 TERENDAH PER SEED")
+worst_per_seed = (
+    MULTI_SEED_RESULT["per_class"]
+    .sort_values(["seed", "f1_score"])
+    .groupby("seed", as_index=False)
+    .head(5)
+)
+display(worst_per_seed.round(6))
+
+print("Seed rekomendasi :", MULTI_SEED_RESULT["recommended_seed"])
+print("Model rekomendasi:", MULTI_SEED_RESULT["recommended_model_path"])
+print("Laporan tersimpan:", MULTI_SEED_RESULT["output_dir"])"""
+        ),
+        nbf.v4.new_markdown_cell(
+            """## Hasil yang tersimpan di Drive
+
+```text
+MyDrive/LatihIsyarat_training_outputs/comparison_seed_42_123_2026/
+├── multi_seed_comparison.csv
+├── multi_seed_statistics.csv
+├── pairwise_prediction_agreement.csv
+├── multi_seed_per_class_metrics.csv
+├── multi_seed_comparison.png
+└── multi_seed_summary.json
+```
+
+Pemilihan model menggunakan validation loss, bukan test accuracy. Metrik test
+tetap dilaporkan sebagai rata-rata dan variasi antar-seed agar tidak memilih
+hasil acak yang kebetulan paling tinggi."""
+        ),
+    ]
+    nbf.validate(compare_notebook)
+    nbf.write(compare_notebook, COMPARE_NOTEBOOK_PATH)
+    print(f"Notebook dibuat: {COMPARE_NOTEBOOK_PATH}")
 
 
 if __name__ == "__main__":

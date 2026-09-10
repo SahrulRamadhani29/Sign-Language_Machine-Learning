@@ -6,6 +6,8 @@ Flutter. Hasil yang nanti dibutuhkan Flutter adalah `model_float32.tflite`,
 
 [Buka notebook di Google Colab](https://colab.research.google.com/github/SahrulRamadhani29/Sign-Language_Machine-Learning/blob/main/training_colab/LatihIsyarat_Training_Colab.ipynb)
 
+[Bandingkan seed 42, 123, dan 2026](https://colab.research.google.com/github/SahrulRamadhani29/Sign-Language_Machine-Learning/blob/main/training_colab/LatihIsyarat_Compare_Seeds_Colab.ipynb)
+
 ## Cara termudah
 
 1. Push repositori ini ke GitHub.
@@ -58,6 +60,22 @@ augmentasi. Ini mencegah hasil test menjadi terlalu optimistis.
 Model terbaik di dataset juga belum tentu terbaik pada kamera HP. Setelah
 integrasi Flutter, model masih harus diuji pada gambar kamera terpisah,
 termasuk ROI kosong dan kondisi tanpa tangan.
+
+## Membandingkan hasil beberapa seed
+
+Gunakan `LatihIsyarat_Compare_Seeds_Colab.ipynb` setelah seluruh training seed
+selesai. Notebook perbandingan tidak melakukan training dan tidak mengunduh
+dataset. Path seed 42, 123, dan 2026 yang sudah dibuat telah diisi otomatis.
+
+Pilih **Runtime > Run all**. Laporan disimpan ke:
+
+```text
+MyDrive/LatihIsyarat_training_outputs/comparison_seed_42_123_2026/
+```
+
+Notebook menghasilkan tabel rata-rata dan standar deviasi, kesamaan prediksi
+antarmodel, metrik per huruf, grafik perbandingan, serta rekomendasi model yang
+dipilih berdasarkan validation loss.
 
 ## Folder hasil di Google Drive
 

@@ -19,6 +19,7 @@ import sys
 from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
+from itertools import combinations
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 
@@ -1135,6 +1136,234 @@ def run_training_pipeline(
     print(f"Evaluasi            : {run_dir / 'evaluation.json'}")
     print(f"Model card           : {run_dir / 'model_card.md'}")
     return run_dir
+
+
+def compare_seed_runs(
+    run_dirs: dict[int, str | Path],
+    output_dir: str | Path | None = None,
+) -> dict[str, Any]:
+    """Compare completed runs without training or downloading the dataset."""
+
+    if len(run_dirs) < 2:
+        raise ValueError("Minimal dua folder run diperlukan untuk perbandingan.")
+
+    rows: list[dict[str, Any]] = []
+    per_class_rows: list[dict[str, Any]] = []
+    predictions_by_seed: dict[int, pd.DataFrame] = {}
+    reference_true_labels: np.ndarray | None = None
+
+    for declared_seed, raw_run_dir in sorted(run_dirs.items()):
+        run_dir = Path(raw_run_dir).expanduser().resolve()
+        required_files = (
+            "run_config.json",
+            "selected_experiment.json",
+            "evaluation.json",
+            "tflite_parity.json",
+            "test_predictions.csv",
+            "model_float32.tflite",
+        )
+        missing = [name for name in required_files if not (run_dir / name).exists()]
+        if missing:
+            raise FileNotFoundError(
+                f"Run seed {declared_seed} tidak lengkap di {run_dir}: {missing}"
+            )
+
+        run_config = json.loads((run_dir / "run_config.json").read_text())
+        actual_seed = int(run_config["training"]["seed"])
+        if actual_seed != int(declared_seed):
+            raise ValueError(
+                f"Folder yang diberi label seed {declared_seed} sebenarnya "
+                f"menggunakan seed {actual_seed}."
+            )
+
+        selected = json.loads(
+            (run_dir / "selected_experiment.json").read_text()
+        )
+        evaluation = json.loads((run_dir / "evaluation.json").read_text())
+        parity_reports = json.loads((run_dir / "tflite_parity.json").read_text())
+        float32_parity = next(
+            report for report in parity_reports if report["variant"] == "float32"
+        )
+        predictions = pd.read_csv(run_dir / "test_predictions.csv")
+        expected_columns = {"true_index", "predicted_index", "correct"}
+        if not expected_columns.issubset(predictions.columns):
+            raise ValueError(
+                f"Kolom test_predictions.csv seed {declared_seed} tidak lengkap."
+            )
+
+        true_labels = predictions["true_index"].to_numpy(dtype=np.int64)
+        if reference_true_labels is None:
+            reference_true_labels = true_labels
+        elif not np.array_equal(reference_true_labels, true_labels):
+            raise ValueError(
+                "Urutan label test berbeda antar-run; perbandingan prediksi "
+                "tidak dapat dilakukan secara adil."
+            )
+        predictions_by_seed[int(declared_seed)] = predictions
+
+        rows.append(
+            {
+                "seed": int(declared_seed),
+                "experiment": selected["experiment"]["name"],
+                "best_epoch": int(selected["best_epoch"]),
+                "validation_loss": float(selected["best_val_loss"]),
+                "validation_accuracy_pct": float(
+                    selected["best_val_accuracy"] * 100
+                ),
+                "test_accuracy_pct": float(evaluation["accuracy"] * 100),
+                "macro_precision_pct": float(
+                    evaluation["macro_precision"] * 100
+                ),
+                "macro_recall_pct": float(evaluation["macro_recall"] * 100),
+                "macro_f1_pct": float(evaluation["macro_f1"] * 100),
+                "tflite_label_agreement_pct": float(
+                    float32_parity["label_agreement"] * 100
+                ),
+                "tflite_max_abs_difference": float(
+                    float32_parity["maximum_absolute_score_difference"]
+                ),
+                "model_size_kib": float(
+                    (run_dir / "model_float32.tflite").stat().st_size / 1024
+                ),
+                "model_path": str(run_dir / "model_float32.tflite"),
+            }
+        )
+
+        class_report = evaluation["classification_report"]
+        for label in CLASS_NAMES:
+            metrics = class_report[label]
+            per_class_rows.append(
+                {
+                    "seed": int(declared_seed),
+                    "label": label,
+                    "precision": float(metrics["precision"]),
+                    "recall": float(metrics["recall"]),
+                    "f1_score": float(metrics["f1-score"]),
+                    "support": int(metrics["support"]),
+                }
+            )
+
+    comparison_frame = pd.DataFrame(rows).sort_values("seed").reset_index(drop=True)
+    metric_columns = [
+        "test_accuracy_pct",
+        "macro_precision_pct",
+        "macro_recall_pct",
+        "macro_f1_pct",
+    ]
+    statistics_frame = (
+        comparison_frame[metric_columns]
+        .agg(["mean", "std", "min", "max"])
+        .reset_index(names="statistic")
+    )
+
+    pairwise_rows = []
+    for seed_a, seed_b in combinations(sorted(predictions_by_seed), 2):
+        prediction_a = predictions_by_seed[seed_a]
+        prediction_b = predictions_by_seed[seed_b]
+        predicted_a = prediction_a["predicted_index"].to_numpy(dtype=np.int64)
+        predicted_b = prediction_b["predicted_index"].to_numpy(dtype=np.int64)
+        correct_a = prediction_a["correct"].astype(bool).to_numpy()
+        correct_b = prediction_b["correct"].astype(bool).to_numpy()
+        pairwise_rows.append(
+            {
+                "seed_a": seed_a,
+                "seed_b": seed_b,
+                "prediction_agreement_pct": float(
+                    np.mean(predicted_a == predicted_b) * 100
+                ),
+                "both_correct_pct": float(np.mean(correct_a & correct_b) * 100),
+                "both_wrong_pct": float(np.mean(~correct_a & ~correct_b) * 100),
+            }
+        )
+    pairwise_frame = pd.DataFrame(pairwise_rows)
+    per_class_frame = pd.DataFrame(per_class_rows)
+
+    # Choose the deployable run by validation metrics, never by test accuracy.
+    recommended_row = comparison_frame.sort_values(
+        ["validation_loss", "validation_accuracy_pct"],
+        ascending=[True, False],
+    ).iloc[0]
+    recommended_seed = int(recommended_row["seed"])
+    recommended_model_path = str(recommended_row["model_path"])
+
+    if output_dir:
+        comparison_dir = Path(output_dir).expanduser().resolve()
+        comparison_dir.mkdir(parents=True, exist_ok=True)
+        comparison_frame.to_csv(
+            comparison_dir / "multi_seed_comparison.csv", index=False
+        )
+        statistics_frame.to_csv(
+            comparison_dir / "multi_seed_statistics.csv", index=False
+        )
+        pairwise_frame.to_csv(
+            comparison_dir / "pairwise_prediction_agreement.csv", index=False
+        )
+        per_class_frame.to_csv(
+            comparison_dir / "multi_seed_per_class_metrics.csv", index=False
+        )
+
+        figure, axis = plt.subplots(figsize=(9, 5))
+        positions = np.arange(len(comparison_frame))
+        width = 0.36
+        axis.bar(
+            positions - width / 2,
+            comparison_frame["test_accuracy_pct"],
+            width,
+            label="Test accuracy",
+        )
+        axis.bar(
+            positions + width / 2,
+            comparison_frame["macro_f1_pct"],
+            width,
+            label="Macro-F1",
+        )
+        axis.set_xticks(positions, comparison_frame["seed"].astype(str))
+        axis.set_xlabel("Seed")
+        axis.set_ylabel("Persen")
+        axis.set_ylim(
+            max(0, comparison_frame["macro_f1_pct"].min() - 2),
+            100,
+        )
+        axis.set_title("Perbandingan Model Baseline Antar-Seed")
+        axis.legend()
+        axis.grid(axis="y", alpha=0.25)
+        figure.tight_layout()
+        figure.savefig(
+            comparison_dir / "multi_seed_comparison.png",
+            dpi=180,
+            bbox_inches="tight",
+        )
+        plt.close(figure)
+
+        summary_payload = {
+            "created_at_utc": utc_now_iso(),
+            "selection_rule": (
+                "Lowest validation loss; test metrics are reported, not used "
+                "to select the deployable seed."
+            ),
+            "recommended_seed": recommended_seed,
+            "recommended_model_path": recommended_model_path,
+            "comparison": json.loads(
+                comparison_frame.to_json(orient="records")
+            ),
+            "statistics": json.loads(
+                statistics_frame.to_json(orient="records")
+            ),
+            "pairwise_prediction_agreement": json.loads(
+                pairwise_frame.to_json(orient="records")
+            ),
+        }
+        save_json(comparison_dir / "multi_seed_summary.json", summary_payload)
+
+    return {
+        "comparison": comparison_frame,
+        "statistics": statistics_frame,
+        "pairwise": pairwise_frame,
+        "per_class": per_class_frame,
+        "recommended_seed": recommended_seed,
+        "recommended_model_path": recommended_model_path,
+        "output_dir": str(Path(output_dir).resolve()) if output_dir else None,
+    }
 
 
 def load_json_config(path: str | Path) -> tuple[TrainingConfig, tuple[ExperimentConfig, ...]]:
