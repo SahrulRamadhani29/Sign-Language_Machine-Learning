@@ -18,8 +18,8 @@ Flutter. Hasil yang nanti dibutuhkan Flutter adalah `model_float32.tflite`,
 Notebook akan melakukan semuanya secara berurutan:
 
 1. Memasang dependensi ringan yang belum tersedia.
-2. Mengunduh dataset resmi
-   `datamunge/sign-language-mnist` melalui `kagglehub`.
+2. Mengunduh dataset resmi `datamunge/sign-language-mnist` melalui `kagglehub`
+   pada run pertama, lalu menyimpan dua CSV yang diperlukan ke Google Drive.
 3. Memvalidasi label, ukuran 28x28, rentang piksel, dan duplikat identik.
 4. Membagi training bawaan menjadi training 80% dan validation 20% dengan
    stratifikasi dan seed tetap.
@@ -61,11 +61,29 @@ termasuk ROI kosong dan kondisi tanpa tangan.
 
 ## Folder hasil di Google Drive
 
-Secara default hasil disimpan di:
+Dataset permanen disimpan di:
+
+```text
+MyDrive/LatihIsyarat_datasets/sign-language-mnist/
+├── sign_mnist_train.csv
+├── sign_mnist_test.csv
+└── dataset_source.json
+```
+
+Run berikutnya mendeteksi kedua CSV tersebut dan tidak mengunduh dataset lagi.
+Total kedua CSV sekitar 105 MB. Cache sementara Kaggle pada runtime Colab dapat
+hilang, tetapi salinan di Drive tetap tersedia.
+
+Model dan laporan setiap training disimpan di folder baru:
 
 ```text
 MyDrive/LatihIsyarat_training_outputs/asl24_YYYYMMDD_HHMMSS_utc/
 ```
+
+Nama berbasis waktu mencegah hasil training lama tertimpa. Selama training,
+checkpoint terbaik setiap kandidat langsung ditulis ke subfolder `experiments/`.
+Setelah semua kandidat selesai, model pemenang disalin menjadi
+`best_model.keras` dan dikonversi menjadi `.tflite`.
 
 Isi pentingnya:
 
@@ -125,9 +143,14 @@ sign_mnist_train.csv
 sign_mnist_test.csv
 ```
 
-Upload folder CSV ke Google Drive, kemudian isi `DATASET_DIR` pada notebook
-dengan path folder tersebut. Jangan memasukkan CSV ke Git karena ukurannya
-besar dan tidak diperlukan oleh aplikasi.
+Upload kedua CSV ke:
+
+```text
+MyDrive/LatihIsyarat_datasets/sign-language-mnist/
+```
+
+Nilai `DATASET_DIR` notebook sudah menunjuk ke folder tersebut. Jangan
+memasukkan CSV ke Git karena ukurannya besar dan tidak diperlukan oleh aplikasi.
 
 ## Menjalankan pemeriksaan lokal
 

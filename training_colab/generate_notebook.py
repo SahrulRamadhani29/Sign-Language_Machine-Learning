@@ -40,7 +40,7 @@ Notebook ini siap dijalankan sendiri di Google Colab. Ia akan mengunduh dataset
 berdasarkan **validation loss**, mengevaluasi test set, dan mengekspor TFLite.
 
 Sebelum mulai, pilih **Runtime > Change runtime type > T4 GPU** jika tersedia.
-Hasil permanen disimpan ke Google Drive; dataset hanya berada di cache Colab."""
+Dataset, checkpoint, model, dan laporan disimpan permanen ke Google Drive."""
         ),
         nbf.v4.new_markdown_cell(
             """## 1. Pasang dependensi ringan
@@ -65,8 +65,8 @@ if not tf.config.list_physical_devices("GPU"):
         nbf.v4.new_markdown_cell(
             """## 3. Hubungkan Google Drive
 
-Checkpoint disimpan langsung ke Drive sehingga tidak hilang jika runtime Colab
-terputus setelah suatu epoch selesai."""
+Dataset diunduh sekali lalu dua CSV yang diperlukan disimpan ke Drive. Checkpoint
+juga ditulis langsung ke Drive agar tidak hilang jika runtime Colab terputus."""
         ),
         nbf.v4.new_code_cell(
             """from google.colab import drive
@@ -82,7 +82,8 @@ Sel ini berasal dari `training_pipeline.py`. Tidak perlu diedit."""
         nbf.v4.new_markdown_cell(
             """## 5. Konfigurasi training
 
-- Biarkan `DATASET_DIR = None` agar dataset Kaggle diunduh otomatis.
+- `DATASET_DIR` adalah cache permanen di Drive. Run pertama mengunduh dataset;
+  run berikutnya langsung menggunakan CSV yang sudah tersimpan.
 - Set `QUICK_BASELINE_ONLY = True` untuk tes alur satu model.
 - Set `False` untuk membandingkan tiga kandidat dan memilih validation loss
   terendah. Test set tidak ikut memilih model."""
@@ -91,7 +92,7 @@ Sel ini berasal dari `training_pipeline.py`. Tidak perlu diedit."""
             """from pathlib import Path
 
 OUTPUT_BASE_DIR = Path("/content/drive/MyDrive/LatihIsyarat_training_outputs")
-DATASET_DIR = None
+DATASET_DIR = Path("/content/drive/MyDrive/LatihIsyarat_datasets/sign-language-mnist")
 QUICK_BASELINE_ONLY = False
 
 TRAINING_CONFIG = TrainingConfig(
@@ -114,7 +115,7 @@ EXPERIMENTS = (
 )
 
 print("Output       :", OUTPUT_BASE_DIR)
-print("Dataset      :", DATASET_DIR or "download otomatis dari Kaggle")
+print("Cache dataset:", DATASET_DIR)
 print("Eksperimen   :", [experiment.name for experiment in EXPERIMENTS])"""
         ),
         nbf.v4.new_markdown_cell(
@@ -155,11 +156,11 @@ print("Model Flutter  :", RUN_DIR / "model_float32.tflite")"""
 Unduh dataset dari:
 https://www.kaggle.com/datasets/datamunge/sign-language-mnist
 
-Ekstrak dan upload `sign_mnist_train.csv` serta `sign_mnist_test.csv` ke satu
-folder Google Drive. Kemudian ubah `DATASET_DIR` pada konfigurasi, misalnya:
+Jika download otomatis tetap gagal, ekstrak dan upload `sign_mnist_train.csv`
+serta `sign_mnist_test.csv` ke folder cache berikut:
 
 ```python
-DATASET_DIR = "/content/drive/MyDrive/datasets/sign-language-mnist"
+DATASET_DIR = "/content/drive/MyDrive/LatihIsyarat_datasets/sign-language-mnist"
 ```
 
 Jangan menilai performa kamera hanya dari test accuracy dataset. Model terpilih
@@ -175,4 +176,3 @@ kondisi tanpa tangan."""
 
 if __name__ == "__main__":
     main()
-

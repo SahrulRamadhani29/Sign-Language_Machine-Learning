@@ -5,6 +5,7 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import numpy as np
 import pandas as pd
@@ -16,6 +17,7 @@ from training_colab.training_pipeline import (
     ExperimentConfig,
     load_sign_mnist_csv,
     remap_original_labels,
+    resolve_dataset_paths,
     select_best_experiment,
     stratified_train_validation_split,
 )
@@ -41,6 +43,21 @@ class LabelContractTest(unittest.TestCase):
 
 
 class DatasetContractTest(unittest.TestCase):
+    def test_existing_drive_cache_skips_download(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_dir:
+            root = Path(temporary_dir)
+            train_path = root / "sign_mnist_train.csv"
+            test_path = root / "sign_mnist_test.csv"
+            train_path.touch()
+            test_path.touch()
+            with patch(
+                "training_colab.training_pipeline.download_dataset",
+                side_effect=AssertionError("download seharusnya dilewati"),
+            ):
+                resolved_train, resolved_test = resolve_dataset_paths(root)
+        self.assertEqual(resolved_train.name, "sign_mnist_train.csv")
+        self.assertEqual(resolved_test.name, "sign_mnist_test.csv")
+
     def test_csv_load_and_stratified_split(self) -> None:
         rows_per_class = 5
         labels = np.repeat(np.asarray(ORIGINAL_LABELS), rows_per_class)

@@ -171,12 +171,54 @@ def download_dataset(dataset_slug: str = DATASET_SLUG) -> Path:
     return downloaded_path
 
 
+def cache_dataset(
+    dataset_dir: str | Path,
+    dataset_slug: str = DATASET_SLUG,
+) -> tuple[Path, Path]:
+    """Reuse Drive CSVs or download once and copy only the required files."""
+
+    cache_root = Path(dataset_dir).expanduser().resolve()
+    try:
+        train_csv, test_csv = find_dataset_csvs(cache_root)
+        print(f"Dataset ditemukan di cache permanen: {cache_root}")
+        print("Download Kaggle dilewati.")
+        return train_csv, test_csv
+    except FileNotFoundError:
+        pass
+
+    print(f"Cache dataset belum lengkap: {cache_root}")
+    downloaded_root = download_dataset(dataset_slug)
+    source_train, source_test = find_dataset_csvs(downloaded_root)
+    cache_root.mkdir(parents=True, exist_ok=True)
+
+    for source_path in (source_train, source_test):
+        destination = cache_root / source_path.name
+        partial_destination = destination.with_suffix(destination.suffix + ".partial")
+        print(f"Menyimpan permanen ke Google Drive: {destination}")
+        shutil.copy2(source_path, partial_destination)
+        partial_destination.replace(destination)
+
+    save_json(
+        cache_root / "dataset_source.json",
+        {
+            "dataset_slug": dataset_slug,
+            "source_url": f"https://www.kaggle.com/datasets/{dataset_slug}",
+            "cached_at_utc": utc_now_iso(),
+            "files": ["sign_mnist_train.csv", "sign_mnist_test.csv"],
+            "note": "Only the two required CSV files are persisted.",
+        },
+    )
+    print("Dataset berhasil disimpan permanen. Run berikutnya tidak perlu download.")
+    return find_dataset_csvs(cache_root)
+
+
 def resolve_dataset_paths(
     dataset_dir: str | Path | None = None,
     dataset_slug: str = DATASET_SLUG,
 ) -> tuple[Path, Path]:
-    root = Path(dataset_dir) if dataset_dir else download_dataset(dataset_slug)
-    return find_dataset_csvs(root)
+    if dataset_dir:
+        return cache_dataset(dataset_dir, dataset_slug)
+    return find_dataset_csvs(download_dataset(dataset_slug))
 
 
 def remap_original_labels(original_labels: np.ndarray) -> np.ndarray:
