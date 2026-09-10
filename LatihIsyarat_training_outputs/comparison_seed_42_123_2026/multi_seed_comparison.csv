@@ -1,4 +1,0 @@
-seed,experiment,best_epoch,validation_loss,validation_accuracy_pct,test_accuracy_pct,macro_precision_pct,macro_recall_pct,macro_f1_pct,tflite_label_agreement_pct,tflite_max_abs_difference,model_size_kib,model_path
-42,baseline,29,0.000730450265109539,100.0,95.95649749023983,95.88937049008544,96.11739045203545,95.86237844641155,100.0,5.841255187988281e-06,404.53125,/content/drive/MyDrive/LatihIsyarat_training_outputs/asl24_20260910_052717_utc/model_float32.tflite
-123,baseline,29,0.00032522965921089053,100.0,95.51031790295595,94.97206973622741,95.49036607368994,95.0869368626229,100.0,1.3887882232666016e-05,404.53125,/content/drive/MyDrive/LatihIsyarat_training_outputs/asl24_20260910_054136_utc/model_float32.tflite
-2026,baseline,29,9.058136492967606e-05,100.0,96.69548243167874,96.26724818995508,97.04988894953065,96.53741430988175,100.0,7.331371307373047e-06,404.53125,/content/drive/MyDrive/LatihIsyarat_training_outputs/asl24_20260910_054435_utc/model_float32.tflite

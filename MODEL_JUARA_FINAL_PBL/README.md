@@ -81,10 +81,13 @@ Folder `reports/` berisi:
 - `MODEL_CARD_SOURCE.md`: kartu model dari eksperimen sumber.
 - `artifact_manifest_source.csv`: manifest artefak sumber.
 
-Sumber asli model tetap tersedia di:
+Model ini sebelumnya dipilih dari hasil eksperimen di:
 
 ```text
 LatihIsyarat_experimental_outputs/
 wide_3seed_full_data_refit_v1/
 MODEL_FINAL/
 ```
+
+Folder eksperimen mentah tersebut telah dihapus setelah model juara, metadata,
+laporan evaluasi, dan checksum disalin serta diverifikasi ke bundle ini.

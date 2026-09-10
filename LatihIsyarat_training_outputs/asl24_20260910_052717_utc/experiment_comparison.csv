@@ -1,4 +1,0 @@
-name,learning_rate,dropout,use_mild_augmentation,epochs_completed,best_epoch,best_val_loss,best_val_accuracy
-baseline,0.001,0.3,False,30,29,0.000730450265109539,1.0
-mild_augmentation,0.001,0.3,True,25,20,0.06161930412054062,0.9821526408195496
-mild_augmentation_dropout_040,0.0005,0.4,True,30,28,0.1927797645330429,0.9278820157051086

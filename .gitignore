@@ -13,6 +13,9 @@ training_colab/**/*.h5
 training_colab/**/*.tflite
 training_colab/**/*.zip
 training_colab/**/sign_mnist_*.csv
+LatihIsyarat_training_outputs/
+LatihIsyarat_experimental_outputs/
+MODEL_TERBAIK_SEED_2026/
 
 # Secrets and local tooling
 kaggle.json
@@ -21,4 +24,3 @@ kaggle.json
 .vscode/
 .DS_Store
 Thumbs.db
-
